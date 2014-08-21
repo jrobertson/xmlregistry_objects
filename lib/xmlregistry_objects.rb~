@@ -42,7 +42,7 @@ class XMLRegistryObjects
           attr_name, x = attr[1][:captures]
           subkey, type = x.split(/\s/).reverse
 
-          r << make_def(path, subkey, attr_name, type)
+          r << make_def(path, attr_name, type)
 
         end
 
@@ -50,8 +50,8 @@ class XMLRegistryObjects
 
         names = reg.xpath("#{path}/*/name()")
         
-        names.inject(s) do |r, subkey| 
-          r << make_def(path, subkey)
+        names.inject(s) do |r, attr_name| 
+          r << make_def(path, attr_name)
         end
       end
 
@@ -63,10 +63,10 @@ class XMLRegistryObjects
 
   private
 
-  def make_def(path, subkey, method_name=subkey, type=nil)
+  def make_def(path, attr_name, type=nil)
 "
-    def #{method_name}      
-      text = @reg.get_key('#{[path, subkey].join('/')}/text()')
+    def #{attr_name}      
+      text = @reg.get_key('#{[path, attr_name].join('/')}/text()')
       #{'text == %q(true) ? true : false' if type == 'Bool'}
     end
 "
