@@ -4,7 +4,7 @@
 
 
 require 'lineparser'
-require 'xml-registry'
+require 'dws-registry'
 
 
 class XMLRegistryObjects
@@ -39,10 +39,8 @@ class XMLRegistryObjects
 
         row[3].inject(s) do |r, attr|
 
-          attr_name, x = attr[1][:captures]
-          subkey, type = x.split(/\s/).reverse
-
-          r << make_def(path, subkey, attr_name, type)
+          attr_name, subkey = attr[1][:captures]
+          r << make_def(path, subkey, attr_name)
 
         end
 
@@ -60,14 +58,17 @@ class XMLRegistryObjects
 
     end
   end
+  
+  def define_methods()
+    @to_h.each.map {|k,v| "define_method :#{k.to_s}, ->{h[:#{k}]}"}.join("\n")
+  end
 
   private
 
-  def make_def(path, subkey, method_name=subkey, type=nil)
+  def make_def(path, subkey, method_name=subkey)
 "
     def #{method_name}      
-      text = @reg.get_key('#{[path, subkey].join('/')}/text()')
-      #{'text == %q(true) ? true : false' if type == 'Bool'}
+      @reg.get_key('#{[path, subkey].join('/')}')
     end
 "
   end
