@@ -3,29 +3,19 @@
 # file: xmlregistry_objects.rb
 
 
-require 'lineparser'
+require 'polyrex'
 require 'dws-registry'
 
 
 class XMLRegistryObjects
 
-
   attr_reader :to_h
 
+  def initialize(reg, polyrexdoc)
+        
+    @to_h = polyrexdoc.records.inject({}) do |rtn, row|
 
-  def initialize(reg, list)
-
-    patterns = [
-      [:root, /(\w+)\s+=\s+\[([^\]]+)\]/, :object],  
-        [:object, /([\w\?]+)\s+=\s+(.*)/, :attribute]
-    ]
-
-    lp = LineParser.new patterns
-    r = lp.parse list
-
-    @to_h = r.inject({}) do |rtn, row|
-
-      name, path = row[1][:captures]
+      name, path = row.name, row.regkey[1..-2]
       class_name = name.capitalize
       klass = Object.const_set(class_name,Class.new)
 
@@ -35,11 +25,12 @@ class XMLRegistryObjects
         end
       "
 
-      s = if row[3].any? then
+      s = if row.records.any? then
 
-        row[3].inject(s) do |r, attr|
-
-          attr_name, subkey = attr[1][:captures]
+        row.records.inject(s) do |r, attr|
+          
+          attr_name, subkey = attr.name, attr.subkeyname
+          
           r << make_def(path, subkey, attr_name)
 
         end
