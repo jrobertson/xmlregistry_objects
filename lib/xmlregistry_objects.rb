@@ -33,6 +33,11 @@ class XMLRegistryObjects
         def initialize(reg)
           @reg = reg
         end
+        
+        def last_modified()
+          lm = @reg.get_key('#{path}').attributes[:last_modified]
+          Time.parse(lm) if lm
+        end
       "
 
       s = if row.records.any? then
