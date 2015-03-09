@@ -11,7 +11,17 @@ class XMLRegistryObjects
 
   attr_reader :to_h
 
-  def initialize(reg, polyrexdoc)
+  def initialize(reg, obj)
+    
+    polyrexdoc = if obj.is_a? Polyrex then 
+    
+      obj
+    
+    elsif obj.is_a? String then
+      
+      Polyrex.new.import "<?polyrex schema='entries/object[name, regkey]/"\
+          "methodx[name,subkeyname]' delimiter=' = '?>\n" + obj
+    end
         
     @to_h = polyrexdoc.records.inject({}) do |rtn, row|
 
@@ -30,17 +40,28 @@ class XMLRegistryObjects
         row.records.inject(s) do |r, attr|
           
           attr_name, subkey = attr.name, attr.subkeyname
+          key = path + '/' + subkey
           
-          r << make_def(path, subkey, attr_name)
+          r << make_def(key, attr_name)
+          r << make_setdef(key, attr_name[/\w+/])
 
         end
 
       else
 
-        names = reg.xpath("#{path}/*/name()")
+        a = reg.xpath("#{path}/*")
         
-        names.inject(s) do |r, subkey| 
-          r << make_def(path, subkey)
+        a.inject(s) do |r, x| 
+          
+          methods_name = subkey = x.name
+          type = x.attributes[:class]          
+          key = path + '/' + subkey
+          
+          r << make_setdef(key, method_name=subkey)          
+          
+          method_name += '?' if type and type.first == 'boolean'          
+          r << make_def(key, method_name)
+
         end
       end
 
@@ -56,12 +77,12 @@ class XMLRegistryObjects
 
   private
 
-  def make_def(path, subkey, method_name=subkey)
-"
-    def #{method_name}      
-      @reg.get_key('#{[path, subkey].join('/')}')
-    end
-"
+  def make_def(key, method_name)    
+    "def #{method_name}()     @reg.get_key '#{key}'     end\n"
   end
+  
+  def make_setdef(key, method_name)    
+    "def #{method_name}=(v)   @reg.set_key '#{key}', v  end\n"
+  end  
 
 end
