@@ -19,8 +19,14 @@ class XMLRegistryObjects
     
     elsif obj.is_a? String then
       
-      Polyrex.new.import "<?polyrex schema='entries/object[name, regkey]/"\
-          "methodx[name,subkeyname]' delimiter=' = '?>\n" + obj
+      buffer, type = RXFHelper.read obj
+
+      if type == :url then
+        Polyrex.new buffer
+      else
+        Polyrex.new.import "<?polyrex schema='entries/object[name, regkey]/"\
+            "methodx[name,subkeyname]' delimiter=' = '?>\n" + obj
+      end
     end
         
     @to_h = polyrexdoc.records.inject({}) do |rtn, row|
