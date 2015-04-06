@@ -68,7 +68,7 @@ class XMLRegistryObjects
 
         a = reg.xpath("#{path}/*")
         
-        a.inject(s) do |r, x| 
+        a.inject(base_methods) do |r, x| 
           
           methods_name = subkey = x.name
           type = x.attributes[:class]          
