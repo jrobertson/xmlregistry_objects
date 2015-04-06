@@ -44,6 +44,12 @@ class XMLRegistryObjects
           lm = @reg.get_key('#{path}').attributes[:last_modified]
           Time.parse(lm) if lm
         end
+        
+        def set(h)          
+          
+          h.each {|key,value| self.method((key.to_s + '=').to_sym).call value }
+          
+        end
       "
 
       s = if row.records.any? then

@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'xmlregistry_objects'
-  s.version = '0.6.1'
+  s.version = '0.6.2'
   s.summary = 'Query the registry using objects built dynamically from a string which maps each object to a registry key.'
   s.authors = ['James Robertson']
   s.files = Dir['lib/xmlregistry_objects.rb']

@@ -35,7 +35,7 @@ class XMLRegistryObjects
       class_name = name.capitalize
       klass = Object.const_set(class_name,Class.new)
 
-      s = "
+      base_methods = "
         def initialize(reg)
           @reg = reg
         end
@@ -54,7 +54,7 @@ class XMLRegistryObjects
 
       s = if row.records.any? then
 
-        row.records.inject(s) do |r, attr|
+        row.records.inject(base_methods) do |r, attr|
           
           attr_name, subkey = attr.name, attr.subkeyname
           key = path + '/' + subkey
