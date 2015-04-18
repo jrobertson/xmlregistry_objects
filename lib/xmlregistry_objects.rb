@@ -95,7 +95,7 @@ class XMLRegistryObjects
   private
 
   def make_def(key, method_name)    
-    "def #{method_name}()     @reg.get_key '#{key}'     end\n"
+    "def #{method_name}()     @reg.get_key('#{key}', auto_detect_type: true)     end\n"
   end
   
   def make_setdef(key, method_name)    
