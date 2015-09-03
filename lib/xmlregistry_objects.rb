@@ -69,7 +69,7 @@ class XMLRegistryObjects
         a = reg.xpath("#{path}/*")
         
         a.inject(base_methods) do |r, x| 
-          
+
           methods_name = subkey = x.name
           type = x.attributes[:class]          
           key = path + '/' + subkey
@@ -91,6 +91,27 @@ class XMLRegistryObjects
   def define_methods()
     @to_h.each.map {|k,v| "define_method :#{k.to_s}, ->{h[:#{k}]}"}.join("\n")
   end
+  
+  # to use this method the client is expect to  fetch the 
+  # hash object from the registry object e.g. 
+  #    xro = XMLRegistryObjects.new(reg,list)
+  #    @h = xro.to_h
+  
+  def define_methods2(obj=nil)
+    
+    a = @to_h.each.map {|k,v| [k.to_s.to_sym, ->{@h[k.to_sym]} ] }
+    
+    if obj then
+      
+      a.each {|name, blk| obj.class.send(:define_method, name, blk) }
+      
+    else
+      
+      return a
+      
+    end
+    
+  end  
 
   private
 
