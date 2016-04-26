@@ -71,7 +71,7 @@ class XMLRegistryObjects
         a.inject(base_methods) do |r, x| 
 
           methods_name = subkey = x.name
-          type = x.attributes[:class]          
+          type = x.attributes[:type]          
           key = path + '/' + subkey
           
           r << make_setdef(key, method_name=subkey)          
