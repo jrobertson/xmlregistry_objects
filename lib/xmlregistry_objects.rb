@@ -71,12 +71,13 @@ class XMLRegistryObjects
         a.inject(base_methods) do |r, x| 
 
           methods_name = subkey = x.name
+
           type = x.attributes[:type]          
           key = path + '/' + subkey
           
           r << make_setdef(key, method_name=subkey)          
-          
-          method_name += '?' if type and type.first == 'boolean'          
+
+          method_name += '?' if type and type == 'boolean'          
           r << make_def(key, method_name)
 
         end
