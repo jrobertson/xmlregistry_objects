@@ -56,9 +56,9 @@ class XMLRegistryObjects
 
         row.records.inject(base_methods) do |r, attr|
           
-          attr_name, subkey = attr.name, attr.subkeyname
+          attr_name, subkey = attr.name, attr.subkeyname[/\w+$/]
           key = path + '/' + subkey
-          
+
           r << make_def(key, attr_name)
           r << make_setdef(key, attr_name[/\w+/])
 
@@ -117,7 +117,12 @@ class XMLRegistryObjects
   private
 
   def make_def(key, method_name)    
-    "def #{method_name}()     @reg.get_key('#{key}', auto_detect_type: true)     end\n"
+<<-EOF
+def #{method_name}()
+  @reg.get_key('#{key}', auto_detect_type: true)
+end
+
+EOF
   end
   
   def make_setdef(key, method_name)    
