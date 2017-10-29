@@ -11,7 +11,10 @@ class XMLRegistryObjects
 
   attr_reader :to_h
 
-  def initialize(reg, obj)
+  def initialize(reg, obj, log: nil)
+
+    @log = log
+    log.info 'XMLRegistryObjects/initialize: active' if log
     
     polyrexdoc = if obj.is_a? Polyrex then 
     
@@ -29,6 +32,8 @@ class XMLRegistryObjects
       end
     end
         
+    log.info 'XMLRegistryObjects/initialize: before @to_h' if log
+    
     @to_h = polyrexdoc.records.inject({}) do |rtn, row|
 
       name, path = row.name, row.regkey[1..-2]
@@ -82,11 +87,15 @@ class XMLRegistryObjects
 
         end
       end
-
+      
+      log.info 'XMLRegistryObjects/initialize: before class_eval ' + klass.to_s if log
+      
       klass.class_eval s
       rtn.merge name.to_sym => klass.new(reg)
 
     end
+    
+    log.info 'XMLRegistryObjects/initialize: completed' if log
   end
   
   def define_methods()
