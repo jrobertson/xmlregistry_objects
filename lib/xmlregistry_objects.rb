@@ -27,7 +27,7 @@ class XMLRegistryObjects
       if type == :url then
         Polyrex.new buffer
       else
-        Polyrex.new.import "<?polyrex schema='entries/object[name, regkey]/"\
+        Polyrex.new.import "<?polyrex schema='entries/objectx[name, regkey]/"\
             "methodx[name,subkeyname]' delimiter=' = '?>\n" + obj
       end
     end
